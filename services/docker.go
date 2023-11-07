@@ -4,7 +4,7 @@ import (
 	"log"
 	"strings"
 
-	ptypes "github.com/xetorthio/play-with-docker/types"
+	ptypes "github.com/imnulhaqueruman/docker-and-go/types"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -50,8 +50,10 @@ func GetExecConnection(id string, ctx context.Context) (*types.HijackedResponse,
 	//if err != nil {
 	//return nil, err
 	//}
-
-	conn, err := c.ContainerExecAttach(ctx, resp.ID, conf)
+	startCheck := types.ExecStartCheck{}
+	conn, err := c.ContainerExecAttach(ctx, resp.ID, startCheck)
+	
+	// conn, err := c.ContainerExecAttach(ctx, resp.ID, conf)
 
 	if err != nil {
 		return nil, err
@@ -62,10 +64,14 @@ func GetExecConnection(id string, ctx context.Context) (*types.HijackedResponse,
 }
 
 func CreateInstance(net string) (*ptypes.Instance, error) {
+	// networkingConfig := &network.NetworkingConfig{} // You need to create a NetworkingConfig
+    // platform := &v1.Platform{} // You also need to create a Platform
+
+
 
 	h := &container.HostConfig{NetworkMode: container.NetworkMode(net), Privileged: true}
 	conf := &container.Config{Image: "docker:dind"}
-	container, err := c.ContainerCreate(context.Background(), conf, h, nil, "")
+	container, err := c.ContainerCreate(context.Background(), conf, h, nil,nil, "")
 
 	if err != nil {
 		return nil, err
